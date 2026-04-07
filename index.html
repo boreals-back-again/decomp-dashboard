@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft LCE Decomp — Live Progress</title>
+<style>
+:root {
+  --bg: #0a0e1a;
+  --bg2: #0f1420;
+  --bg3: #1a1f30;
+  --fg: #e8eaed;
+  --fg-dim: #8b95a8;
+  --accent: #8b5cf6;
+  --accent2: #06b6d4;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --border: #1f2937;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  padding: 2rem;
+  line-height: 1.5;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+h1 .accent { color: var(--accent); }
+.subtitle {
+  color: var(--fg-dim);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+.hero {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.percent {
+  font-size: 5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em;
+}
+.percent-label {
+  color: var(--fg-dim);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.5rem;
+}
+.progress-bar {
+  height: 8px;
+  background: var(--bg3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 2rem 0 1rem;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.stat {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+.stat-label {
+  color: var(--fg-dim);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.stat-value.green { color: var(--green); }
+.stat-value.yellow { color: var(--yellow); }
+.stat-value.dim { color: var(--fg-dim); }
+.section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.section h2 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fg-dim);
+  margin-bottom: 1rem;
+}
+.report {
+  background: var(--bg3);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+.report-time {
+  color: var(--fg-dim);
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+.report-content {
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+.quality-breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+.quality-bar {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+.quality-name {
+  color: var(--fg-dim);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+.quality-count {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.footer {
+  text-align: center;
+  color: var(--fg-dim);
+  font-size: 0.75rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>Minecraft <span class="accent">LCE</span> Decompilation</h1>
+<div class="subtitle">Nintendo Switch v1.0.17 — Matching decompilation to native C++</div>
+</header>
+
+<div class="hero">
+<div class="percent" id="percent">--%</div>
+<div class="percent-label"><span class="live-dot"></span>Live Progress</div>
+<div class="progress-bar">
+<div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+</div>
+<div class="subtitle">
+<span id="matched">--</span> of <span id="total">--</span> functions decompiled
+</div>
+</div>
+
+<div class="stats">
+<div class="stat">
+<div class="stat-label">Matched</div>
+<div class="stat-value green" id="stat-matched">--</div>
+</div>
+<div class="stat">
+<div class="stat-label">Remaining</div>
+<div class="stat-value dim" id="stat-remaining">--</div>
+</div>
+<div class="stat">
+<div class="stat-label">Perfect (100%)</div>
+<div class="stat-value green" id="stat-perfect">--</div>
+</div>
+<div class="stat">
+<div class="stat-label">Last Update</div>
+<div class="stat-value" id="stat-updated" style="font-size: 0.875rem">--</div>
+</div>
+</div>
+
+<div class="section">
+<h2>Match Quality Breakdown</h2>
+<div class="quality-breakdown" id="quality-breakdown">
+</div>
+</div>
+
+<div class="section">
+<h2>Latest Reports</h2>
+<div id="reports">Loading...</div>
+</div>
+
+<div class="footer">
+Reference project: <a href="https://github.com/GRAnimated/MinecraftLCE">GRAnimated/MinecraftLCE</a> (11.2%) ·
+<a href="https://github.com/coah80/decomp-dashboard">Source</a>
+</div>
+</div>
+
+<script>
+async function loadData() {
+  try {
+    const res = await fetch('progress.json?' + Date.now());
+    const data = await res.json();
+    update(data);
+  } catch (e) {
+    console.error('Failed to load progress:', e);
+  }
+}
+
+function update(data) {
+  const pct = data.percent || 0;
+  document.getElementById('percent').textContent = pct.toFixed(2) + '%';
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('matched').textContent = (data.matched || 0).toLocaleString();
+  document.getElementById('total').textContent = (data.total || 0).toLocaleString();
+  document.getElementById('stat-matched').textContent = (data.matched || 0).toLocaleString();
+  document.getElementById('stat-remaining').textContent = ((data.total || 0) - (data.matched || 0)).toLocaleString();
+  document.getElementById('stat-perfect').textContent = (data.perfect || 0).toLocaleString();
+  document.getElementById('stat-updated').textContent = new Date(data.updated || Date.now()).toLocaleString();
+
+  // Quality breakdown
+  const qb = document.getElementById('quality-breakdown');
+  qb.innerHTML = '';
+  const buckets = data.quality || {};
+  for (const [k, v] of Object.entries(buckets)) {
+    qb.innerHTML += `<div class="quality-bar"><div class="quality-name">${k}</div><div class="quality-count">${v.toLocaleString()}</div></div>`;
+  }
+
+  // Reports
+  const r = document.getElementById('reports');
+  if (data.reports && data.reports.length) {
+    r.innerHTML = data.reports.slice(0, 5).map(rp =>
+      `<div class="report"><div class="report-time">${new Date(rp.timestamp).toLocaleString()} · ${rp.percent.toFixed(2)}% (${rp.matched} matched)</div><div class="report-content">${rp.content}</div></div>`
+    ).join('');
+  } else {
+    r.textContent = 'No reports yet.';
+  }
+}
+
+loadData();
+setInterval(loadData, 10000);  // refresh every 10s
+</script>
+</body>
+</html>
